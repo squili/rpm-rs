@@ -50,14 +50,11 @@ impl traits::Signing<traits::algorithm::RSA> for Signer {
             ],
         };
 
-        let signature_packet = sig_cfg
-            .sign(&self.secret_key, passwd_fn, data)
-            .map_err(|e| RPMError::SignError(Box::new(e)))?;
+        let signature_packet = sig_cfg.sign(&self.secret_key, passwd_fn, data)?;
 
         let mut signature_bytes = Vec::with_capacity(1024);
         let mut cursor = Cursor::new(&mut signature_bytes);
-        ::pgp::packet::write_packet(&mut cursor, &signature_packet)
-            .map_err(|e| RPMError::SignError(Box::new(e)))?;
+        ::pgp::packet::write_packet(&mut cursor, &signature_packet)?;
 
         Ok(signature_bytes)
     }
@@ -68,7 +65,7 @@ impl Signer {
     pub fn load_from_asc_bytes(input: &[u8]) -> Result<Self, RPMError> {
         // only asc loading is supported right now
         let input = ::std::str::from_utf8(input).map_err(|e| RPMError::KeyLoadError {
-            source: Box::new(e),
+            source: anyhow::anyhow!(e),
             details: "Failed to parse bytes as utf8 for ascii armored parsing",
         })?;
         Self::load_from_asc(input)
@@ -77,7 +74,7 @@ impl Signer {
     pub fn load_from_asc(input: &str) -> Result<Self, RPMError> {
         let (secret_key, _) = ::pgp::composed::signed_key::SignedSecretKey::from_string(input)
             .map_err(|e| RPMError::KeyLoadError {
-                source: Box::new(e),
+                source: anyhow::anyhow!(e),
                 details: "Failed to parse bytes as ascii armored key",
             })?;
         Ok(Self { secret_key })
@@ -125,7 +122,7 @@ impl traits::Verifying<traits::algorithm::RSA> for Verifier {
             if self.public_key.key_id() == *key_id {
                 return signature.verify(&self.public_key, data).map_err(|e| {
                     RPMError::VerificationError {
-                        source: Box::new(e),
+                        source: anyhow::anyhow!(e),
                         key_ref: format!("{:?}", key_id),
                     }
                 });
@@ -162,7 +159,7 @@ impl traits::Verifying<traits::algorithm::RSA> for Verifier {
                             log::trace!("Test next candidate subkey");
                             signature.verify(sub_key, &mut data).map_err(|e| {
                                 RPMError::VerificationError {
-                                    source: Box::new(e),
+                                    source: anyhow::anyhow!(e),
                                     key_ref: format!("{:?}", sub_key.key_id()),
                                 }
                             })
@@ -180,7 +177,7 @@ impl traits::Verifying<traits::algorithm::RSA> for Verifier {
             signature
                 .verify(&self.public_key, data)
                 .map_err(|e| RPMError::VerificationError {
-                    source: Box::new(e),
+                    source: anyhow::anyhow!(e),
                     key_ref: format!("{:?}", self.public_key.key_id()),
                 })
         }
@@ -191,7 +188,7 @@ impl Verifier {
     pub fn load_from_asc_bytes(input: &[u8]) -> Result<Self, RPMError> {
         // only asc loading is supported right now
         let input = ::std::str::from_utf8(input).map_err(|e| RPMError::KeyLoadError {
-            source: Box::new(e),
+            source: anyhow::anyhow!(e),
             details: "Failed to parse bytes as utf8 for ascii armored parsing",
         })?;
         Self::load_from_asc(input)
@@ -200,7 +197,7 @@ impl Verifier {
     pub fn load_from_asc(input: &str) -> Result<Self, RPMError> {
         let (public_key, _) = ::pgp::composed::signed_key::SignedPublicKey::from_string(input)
             .map_err(|e| RPMError::KeyLoadError {
-                source: Box::new(e),
+                source: anyhow::anyhow!(e),
                 details: "Failed to parse bytes as ascii armored key",
             })?;
 

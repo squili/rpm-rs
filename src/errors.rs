@@ -74,17 +74,17 @@ pub enum RPMError {
     NoSignatureFound,
 
     #[error("error creating signature: {0}")]
-    SignError(Box<dyn std::error::Error>),
+    SignError(#[from] pgp::errors::Error),
 
     #[error("error parsing key - {details}. underlying error was: {source}")]
     KeyLoadError {
-        source: Box<dyn std::error::Error>,
+        source: anyhow::Error,
         details: &'static str,
     },
 
     #[error("error verifying signature with key {key_ref}: {source}")]
     VerificationError {
-        source: Box<dyn std::error::Error>,
+        source: anyhow::Error,
         key_ref: String,
     },
 
@@ -109,5 +109,16 @@ impl From<nom::Err<(&[u8], nom::error::ErrorKind)>> for RPMError {
             }
             nom::Err::Incomplete(_) => RPMError::Nom("unhandled incomplete".to_string()),
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::RPMError;
+
+    #[test]
+    fn anyhowify() {
+        // ensure that RPMError can be used with anyhow
+        let _: anyhow::Error = RPMError::InvalidLeadMajorVersion(0).into();
     }
 }
