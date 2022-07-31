@@ -297,7 +297,7 @@ fn test_region_tag() -> Result<(), Box<dyn std::error::Error>> {
 
     let data = possible_binary.unwrap();
 
-    let (_, entry) = IndexEntry::<IndexSignatureTag>::parse(&data)?;
+    let (_, entry) = IndexEntry::<IndexSignatureTag>::parse(data)?;
 
     assert_eq!(entry.tag, IndexSignatureTag::HEADER_SIGNATURES);
     assert_eq!(entry.data.to_u32(), IndexData::Bin(Vec::new()).to_u32());

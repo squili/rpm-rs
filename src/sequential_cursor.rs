@@ -80,6 +80,7 @@ impl<'s> std::io::Seek for SeqCursor<'s> {
     }
 }
 
+#[allow(clippy::uninit_vec, clippy::unused_io_amount)]
 #[cfg(test)]
 mod test {
     use super::*;
