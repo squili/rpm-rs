@@ -165,7 +165,7 @@ where
             .ok_or_else(|| RPMError::TagNotFound(tag.to_string()))
     }
 
-    pub(crate) fn get_entry_binary_data(&self, tag: T) -> Result<&[u8], RPMError> {
+    pub fn get_entry_binary_data(&self, tag: T) -> Result<&[u8], RPMError> {
         let entry = self.find_entry_or_err(&tag)?;
         entry
             .data
@@ -177,7 +177,7 @@ where
             })
     }
 
-    pub(crate) fn get_entry_string_data(&self, tag: T) -> Result<&str, RPMError> {
+    pub fn get_entry_string_data(&self, tag: T) -> Result<&str, RPMError> {
         let entry = self.find_entry_or_err(&tag)?;
         entry
             .data
@@ -189,7 +189,7 @@ where
             })
     }
 
-    pub(crate) fn get_entry_i16_array_data(&self, tag: T) -> Result<Vec<i16>, RPMError> {
+    pub fn get_entry_i16_array_data(&self, tag: T) -> Result<Vec<i16>, RPMError> {
         let entry = self.find_entry_or_err(&tag)?;
         entry
             .data
@@ -201,7 +201,7 @@ where
             })
     }
 
-    pub(crate) fn get_entry_i32_data(&self, tag: T) -> Result<i32, RPMError> {
+    pub fn get_entry_i32_data(&self, tag: T) -> Result<i32, RPMError> {
         let entry = self.find_entry_or_err(&tag)?;
         entry
             .data
@@ -213,7 +213,7 @@ where
             })
     }
 
-    pub(crate) fn get_entry_i32_array_data(&self, tag: T) -> Result<Vec<i32>, RPMError> {
+    pub fn get_entry_i32_array_data(&self, tag: T) -> Result<Vec<i32>, RPMError> {
         let entry = self.find_entry_or_err(&tag)?;
         entry
             .data
@@ -225,7 +225,7 @@ where
             })
     }
 
-    pub(crate) fn get_entry_i64_data(&self, tag: T) -> Result<i64, RPMError> {
+    pub fn get_entry_i64_data(&self, tag: T) -> Result<i64, RPMError> {
         let entry = self.find_entry_or_err(&tag)?;
         entry
             .data
@@ -237,7 +237,7 @@ where
             })
     }
 
-    pub(crate) fn get_entry_i64_array_data(&self, tag: T) -> Result<Vec<i64>, RPMError> {
+    pub fn get_entry_i64_array_data(&self, tag: T) -> Result<Vec<i64>, RPMError> {
         let entry = self.find_entry_or_err(&tag)?;
         entry
             .data
@@ -249,7 +249,7 @@ where
             })
     }
 
-    pub(crate) fn get_entry_string_array_data(&self, tag: T) -> Result<&[String], RPMError> {
+    pub fn get_entry_string_array_data(&self, tag: T) -> Result<&[String], RPMError> {
         let entry = self.find_entry_or_err(&tag)?;
         entry
             .data
