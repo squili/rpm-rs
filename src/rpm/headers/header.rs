@@ -261,6 +261,18 @@ where
             })
     }
 
+    pub fn get_entry_i18n_string_data(&self, tag: T) -> Result<&Vec<String>, RPMError> {
+        let entry = self.find_entry_or_err(&tag)?;
+        entry
+            .data
+            .as_i18n_string()
+            .ok_or_else(|| RPMError::UnexpectedTagDataType {
+                expected_data_type: "i18n string",
+                actual_data_type: entry.data.to_string(),
+                tag: entry.tag.to_string(),
+            })
+    }
+
     pub(crate) fn create_region_tag(tag: T, records_count: i32, offset: i32) -> IndexEntry<T> {
         let mut header_immutable_index_data = vec![];
         let mut hie = IndexEntry::new(tag, (records_count + 1) * -16, IndexData::Bin(Vec::new()));
@@ -1121,6 +1133,13 @@ impl IndexData {
     pub(crate) fn as_binary(&self) -> Option<&[u8]> {
         match self {
             IndexData::Bin(d) => Some(d.as_slice()),
+            _ => None,
+        }
+    }
+
+    pub(crate) fn as_i18n_string(&self) -> Option<&Vec<String>> {
+        match self {
+            IndexData::I18NString(d) => Some(d),
             _ => None,
         }
     }
